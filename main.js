@@ -3,8 +3,9 @@ const express = require('express');
 const app = express();
 
 app.post('/login',(req,res)=>{
-    console.log(req);
-    console.log(res);
+   // console.log(req);
+    console.log(req.params);
+    console.log(res.params);
 })
 
 app.post('/register',(req,res)=>{
@@ -13,8 +14,11 @@ app.post('/register',(req,res)=>{
     
 })
 
-app.get('/user',(req,res)=>{
-    
+app.get('/',(req,res)=>{
+    res.redirect('/login');
 })
 
-app.listen(3000);
+const port = 3000
+app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`)
+  })
