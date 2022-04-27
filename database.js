@@ -35,7 +35,7 @@ const register = function(companyID, password, email, name, establishment, domai
         return new Promise(function(resolve, reject){
 
             // This if checks if these variables are numbers. IF they are not numbers -> reject!
-            if(isNaN(companyID) || isNaN(occupation) || isNaN(size) || isNan(amountManagers) || isNaN(amountEmployees) || isNaN(amountCEO)){
+            if(isNaN(companyID) || isNaN(size) || isNaN(amountManagers) || isNaN(amountEmployees) || isNaN(amountCEO)){
                 reject(-1)
             }
             pool.query(`INSERT INTO users_info (company_id, year_establishment, organization_size, num_of_ceo, num_of_managers, num_of_employees, email, organization_domain, organization_name, occupation, location, organization_system_used, password)
@@ -43,12 +43,29 @@ const register = function(companyID, password, email, name, establishment, domai
                 then(result => {
                     resolve(1);
                 }).catch(e => {
-                    console.error(e.stack)
-                    reject(-1);
+                    console.error(e);
+                    reject(e.detail);
                 }).then(() => {
                 });
         });
 }
 
+// This func gets email,password and companyID and saves them in the database.
+// Each email is a employee
+const saveEmail = function(email, password, companyID){
+    return new Promise(function(resolve, reject){
 
-module.exports = {register, login};
+        // Need to write "IF statement" that checks email,password and companyID not nulls or empty strings
+        pool.query(`INSERT INTO users_email (email, password, company_id, is_done)
+            VALUES( '${email}' , '${password}' , ${companyID} , False )`).
+            then(result => {
+                resolve(1);
+            }).catch(e => {
+                console.error(e.detail);
+                reject(e.detail);
+            }).then(() => {
+            });
+    });
+}
+
+module.exports = {register, login, saveEmail};

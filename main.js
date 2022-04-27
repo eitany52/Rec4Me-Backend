@@ -3,6 +3,8 @@ const bodyParser = require("body-parser");
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const database = require('./database');
+const csv = require('csv-parser');
+const fs = require('fs');
 const app = express();
 require('dotenv').config();
 
@@ -13,7 +15,7 @@ app.use(express.json());
 app.use("/",router);
 
 
-router.post('/login', (req,res)=>{
+router.post('/log-in', (req,res)=>{
     database.login(req.body.companyID, req.body.companyPassword).then(data =>{
         console.log(data);
         //res.redirect('admin_panel.html');
@@ -30,26 +32,23 @@ router.post('/login', (req,res)=>{
     });
 });
 
-app.post('/register', (req,res)=>{
-    database.register(req.body.companyID,req.body.companyPassword,req.body.email,
-        req.body.compName,req.body.establishment,req.body.domain,
-        req.body.occupation, req.body.location, req.body.size, req.body.numOfManagers, req.body.numOfEmployees,
-        req.body.numOfCeo, req.body.systemUsed).then((data) =>{
-            console.log(data);
-            res.send(1);
+app.post('/sign-up', (req,res)=>{
+    const data = req.body;
+    database.register(data.companyID, data.companyPassword,data.email,
+        data.compName,data.establishment,data.domain,data.occupation,
+        data.location, data.size, data.numOfManagers, data.numOfEmployees,
+        data.numOfCeo, data.systemUsed).then((data) =>{
+            res.sendStatus(200);
         }).catch(err => {
             console.log(err);
-            res.send(-1);
+            res.status(400).send(err);
         });
 });
 
-app.get('/adminpanel',authenticateToken,(req,res)=>{
+app.post('/adminpanel',authenticateToken,(req,res)=>{
 
 });
 
-app.get('/home',(req,res)=>{
-    res.redirect('/home');
-})
 
 // middleware function that check if the token is valid
 function authenticateToken(req, res, next){
