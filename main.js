@@ -45,8 +45,12 @@ app.post('/sign-up', (req,res)=>{
         });
 });
 
-app.post('/adminpanel',authenticateToken,(req,res)=>{
+app.get('/questions/{company_id}',(req,res)=>{
+    req.params.company_id
+})
 
+app.post('/adminpanel',authenticateToken,(req,res)=>{
+  
 });
 
 
