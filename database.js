@@ -18,23 +18,23 @@ const pool = new Pool({
 const login = function(companyID, password){
     return new Promise(function(resolve, reject){
         if(companyID === "" || password === ""){
-            reject(-1);
+            reject(false);
         }
         pool.query(`SELECT company_id, password FROM users_info WHERE company_id= 
         ${companyID}`).then(user =>{
             if(!user){ // if the user doesn't exist
-                reject(-1);
+                reject(false);
             }
             //if the password is incorrect
             if(!compareSync(password, user.rows[0].password)){
-                reject(-1);
+                reject(false);
             }
             else{ // if the user exists and the password is correct
                 resolve(1);
             }
         }).catch(err =>{
             console.log(err);
-            reject(-1);
+            reject(false);
         })
     })
 }
@@ -45,7 +45,7 @@ const register = function(companyID, password, email, name, establishment, domai
 
             // This if checks if these variables are numbers. IF they are not numbers -> reject!
             if(isNaN(companyID) || isNaN(size) || isNaN(amountManagers) || isNaN(amountEmployees) || isNaN(amountCEO)){
-                reject(-1)
+                reject(false)
             }
             pool.query(`INSERT INTO users_info (company_id, year_establishment, organization_size, num_of_ceo, num_of_managers, num_of_employees, email, organization_domain, organization_name, occupation, location, organization_system_used, password)
                 VALUES( ${companyID} , ${establishment}, ${size} , ${amountCEO} ,${amountManagers},${amountEmployees}, '${email}', '${domain}' , '${name}', '${occupation}' , '${location}' , '${systemUsed}', '${password}' )`).

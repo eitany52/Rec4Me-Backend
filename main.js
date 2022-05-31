@@ -3,8 +3,6 @@ const bodyParser = require("body-parser");
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const database = require('./database');
-const csv = require('csv-parser');
-const fs = require('fs');
 const cors = require('cors');
 const passport = require('passport');
 const app = express();
@@ -20,9 +18,8 @@ app.use("/",router);
 
 
 
-router.post('/log-in', (req,res)=>{
-    database.login(req.body.companyID, req.body.companyPassword).then(message =>{        
-        console.log(message);              
+app.post('/log-in', (req,res)=>{
+    database.login(req.body.companyID, req.body.companyPassword).then(message =>{                  
         const payload = { companyID: req.body.companyID};
         // creating access token
         const data = {
@@ -30,26 +27,23 @@ router.post('/log-in', (req,res)=>{
             message: message
         }
         res.status(200).send(data);
-        //res.redirect('/admin');
-        //res.render('/admin',accessToken);
         
     }).catch(err =>{
         console.log(err);
-        //res.send(err);       
+        res.status(500).send(err); // 500 = Server error       
     });
 });
 
-app.post('/adminpanel',authenticateToken,(req,res)=>{
+app.post('/sign-up', (req,res)=>{
     const data = req.body;
     database.register(data.companyID, data.companyPassword,data.email,
         data.compName,data.establishment,data.domain,data.occupation,
         data.location, data.size, data.numOfManagers, data.numOfEmployees,
-        data.numOfCeo, data.systemUsed).then((message) =>{
-            console.log(message);
-            //res.status(200).send(message);
+        data.numOfCeo, data.systemUsed).then((data) =>{
+            res.sendStatus(200);
         }).catch(err => {
             console.log(err);
-            //res.send(err);
+            res.status(500).send(err);
         });
 });
 
