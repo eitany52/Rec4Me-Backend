@@ -29,6 +29,7 @@ app.post('/log-in', (req,res)=>{
         res.status(200).send(data);
         
     }).catch(err =>{
+        console.log("I was here");
         console.log(err);
         res.status(500).send(err); // 500 = Server error       
     });
